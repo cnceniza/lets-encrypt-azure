@@ -4,7 +4,7 @@ on:
       - master
 
 env:
-  ResourceGroup: quickmall
+  ResourceGroup: quickmal
 jobs:
   build:
     runs-on: ubuntu-latest
