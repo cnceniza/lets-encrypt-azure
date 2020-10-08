@@ -152,8 +152,13 @@ namespace LetsEncrypt.Logic
             CertificateRenewalOptions cfg,
             CancellationToken cancellationToken)
         {
+            _logger.LogInformation($"starting -> _authenticationService.AuthenticateAsync");
             var authenticationContext = await _authenticationService.AuthenticateAsync(options, cancellationToken);
+            _logger.LogInformation($"done -> _authenticationService.AuthenticateAsync");
+
+            _logger.LogInformation($"starting -> authenticationContext.AcmeContext.NewOrder");
             var order = await authenticationContext.AcmeContext.NewOrder(cfg.HostNames);
+            _logger.LogInformation($"done -> authenticationContext.AcmeContext.NewOrder");
 
             var challenge = await _renewalOptionParser.ParseChallengeResponderAsync(cfg, cancellationToken);
 
