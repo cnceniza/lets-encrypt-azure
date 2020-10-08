@@ -146,6 +146,7 @@ namespace LetsEncrypt.Logic.Config
 
         public ITargetResource ParseTargetResource(CertificateRenewalOptions cfg)
         {
+            _logger.LogWarning($"RenewalOptionParser.ParseTargetResource -> ${cfg.TargetResource.Type.ToLowerInvariant()}");
             switch (cfg.TargetResource.Type.ToLowerInvariant())
             {
                 case "cdn":
