@@ -93,7 +93,7 @@ namespace LetsEncrypt.Func.Functions
                         cert.Overrides = overrides ?? Overrides.None;
                         try
                         {
-                            _logger.LogInformation($"await _renewalService.RenewCertificateAsync(config.Acme, cert, cancellationToken) ${cert.TargetResource.Type.ToLowerInvariant()}");
+                            _logger.LogInformation($"await _renewalService.RenewCertificateAsync(config.Acme, cert, cancellationToken) {cert.TargetResource.Name}");
                             var result = await _renewalService.RenewCertificateAsync(config.Acme, cert, cancellationToken);
                             switch (result)
                             {
