@@ -46,6 +46,7 @@ namespace LetsEncrypt.Logic
             _logger.LogInformation($"Working on certificate for: {hostNames}");
 
             // 1. check if valid cert exists
+            _logger.LogInformation($"getting existing certificate");
             var cert = await GetExistingCertificateAsync(options, cfg, cancellationToken);
 
             bool updateResource = false;
@@ -56,10 +57,12 @@ namespace LetsEncrypt.Logic
                 var order = await ValidateOrderAsync(options, cfg, cancellationToken);
 
                 // 3. save certificate
+                _logger.LogInformation($"generating a certificate");
                 cert = await GenerateAndStoreCertificateAsync(order, cfg, cancellationToken);
                 updateResource = true;
             }
-
+            
+            _logger.LogInformation($"done saving a certificate");
             var resource = _renewalOptionParser.ParseTargetResource(cfg);
             _logger.LogInformation($"resource.Name --> {resource.Name}");
             _logger.LogInformation($"resource.Type --> {resource.Type}");
