@@ -160,9 +160,13 @@ namespace LetsEncrypt.Logic
             var order = await authenticationContext.AcmeContext.NewOrder(cfg.HostNames);
             _logger.LogInformation($"done -> authenticationContext.AcmeContext.NewOrder");
 
+            _logger.LogInformation($"starting -> renewalOptionParser.ParseChallengeResponderAsync");
             var challenge = await _renewalOptionParser.ParseChallengeResponderAsync(cfg, cancellationToken);
+            _logger.LogInformation($"done -> renewalOptionParser.ParseChallengeResponderAsync");
 
+            _logger.LogInformation($"starting -> challenge.InitiateChallengesAsync");
             var challengeContexts = await challenge.InitiateChallengesAsync(order, cancellationToken);
+            _logger.LogInformation($"done -> challenge.InitiateChallengesAsync");
 
             if (challengeContexts.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(challengeContexts));
@@ -170,11 +174,15 @@ namespace LetsEncrypt.Logic
             try
             {
                 // validate domain ownership
+                _logger.LogInformation($"starting -> ValidateDomainOwnershipAsync");
                 await ValidateDomainOwnershipAsync(challengeContexts, cancellationToken);
+                _logger.LogInformation($"done -> ValidateDomainOwnershipAsync");
             }
             finally
             {
+                _logger.LogInformation($"starting -> challenge.CleanupAsync");
                 await challenge.CleanupAsync(challengeContexts, cancellationToken);
+                _logger.LogInformation($"done -> challenge.CleanupAsync");
             }
             return order;
         }
