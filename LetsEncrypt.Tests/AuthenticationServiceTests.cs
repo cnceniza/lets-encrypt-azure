@@ -5,6 +5,7 @@ using LetsEncrypt.Logic.Acme;
 using LetsEncrypt.Logic.Authentication;
 using LetsEncrypt.Logic.Storage;
 using LetsEncrypt.Tests.Extensions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -37,8 +38,8 @@ namespace LetsEncrypt.Tests
             var factoryMock = acmeContextMock.Object.CreateFactoryMock();
 
             var options = TestHelper.GetStagingOptions();
-
-            IAuthenticationService authenticationService = new AuthenticationService(storageMock.Object, factoryMock.Object);
+            var log = new Mock<ILogger<AuthenticationService>>();
+            IAuthenticationService authenticationService = new AuthenticationService(storageMock.Object, log.Object, factoryMock.Object);
 
             // act
             var context = await authenticationService.AuthenticateAsync(options, CancellationToken.None);
@@ -92,7 +93,8 @@ namespace LetsEncrypt.Tests
             keyFactoryMock.Setup(x => x.FromPem(keyInPemFormat))
                 .Returns(keyMock.Object);
 
-            IAuthenticationService authenticationService = new AuthenticationService(storageMock.Object, contextFactoryMock.Object, keyFactoryMock.Object);
+            var log = new Mock<ILogger<AuthenticationService>>();
+            IAuthenticationService authenticationService = new AuthenticationService(storageMock.Object, log.Object, contextFactoryMock.Object, keyFactoryMock.Object);
 
             // act
             var context = await authenticationService.AuthenticateAsync(options, CancellationToken.None);
