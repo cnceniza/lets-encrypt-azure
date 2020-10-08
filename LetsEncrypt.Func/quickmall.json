@@ -1,0 +1,90 @@
+{
+  "acme": {
+    // letsencrypt account. will receive emails from LetsEncrypt if renewal failed (1-2 weeks before expiry)
+    "email": "cedrick@gistlens.com",
+    // default for all certificates in this file
+    // letsencrypt certs are valid 90 days -> renewal is checked daily and occurs 30 days before expiry in this case
+    // defaults to 30 days if not set
+    "renewXDaysBeforeExpiry": 30,
+    // if true, will use the LetsEncrypt staging environment (not actually issuing a real certificate)
+    // if false will use the prod environment. note that prod has rate-limits https://letsencrypt.org/docs/rate-limits/
+    // defaults to false if not set
+    "staging": false
+  },
+  // list of certificates to issue
+  // create one file per domain or per project or put it all in a single config - up to you!
+  "certificates": [
+    {
+      // a single cert with all these hostnames will be issued
+      "hostNames": [
+        "quickmall.live",
+        "www.quickmall.live"
+      ],
+      // how to verify the LetsEncrypt challenge (currently only supports type=storageAccount)
+      // defaults to assume MSI access to $web container
+      "challengeResponder": {
+        "type": "storageAccount",
+        "properties": {
+          // assumes static website is enabled on the storage account by default
+          // defaults to $web if not set
+          "containerName": "$web",
+          // assumes standard letsencrypt folder
+          // defaults to path listed below if not set
+          "path": ".well-known/acme-challenge/",
+
+          // storageAccount supports 3 modes of authentication: MSI, connection string and connection string in keyvault
+          // 1. MSI (preferred)
+          // for MSI you must grant the function MSI "Storage Blob Data Contributor" on the container listed above (in the Azure Portal IAM section of the storage container)
+          // the function MSI has the same name as your function resource
+          // if MSI is used, the accountName of the storage is needed as well
+          // if accountName is not set, assumes same name as target resource
+          // note that "-" is automatically removed, e.g. cdn "my-app" -> assumes storage "myapp"
+          "accountName": "quickmall",
+          // 2. connection string (least secure)
+          // just set the full connection string in the config:
+          "connectionString": "",
+          // 3. connection string in keyvault:
+          // (function app MSI must be granted Get,List secrets access policies to the keyvault):
+          // if keyVaultName not set, assumes same keyvault as in certificateStore section
+          "keyVaultName": "example",
+          // must contain connection string to storage account
+          // defaults to name "Storage" if not set
+          "secretName": "Storage"
+        }
+      },
+      "certificateStore": {
+        // only supports keyvault for now
+        "type": "keyVault",
+        "properties": {
+          // where to store the certificate upon creation
+          // uses name of targetResource if not set
+          // azure function MSI requires Certificate Get, List, Import & Update permissions
+          "name": "quickmall",
+          // defaults to first hostname with replace(".", "-") due to keyvault limitation (example.com -> example-com)
+          "certificateName": "quickmall-live",
+          // resourcegroup only needed when updating web app (not needed for cdn), defaults to name of keyvault if not set
+          "resourceGroupName": "quickmall"
+        }
+      },
+      // the resource which will receive the certificate update
+      "targetResource": {
+        // azure function must be "CDN Endpoint Contributor" on all required endpoints and "CDN Profile Reader" on all affected CDNs
+        "type": "cdn",
+        // if all property names are the same, may also use shortcut "name": "cdn-name" next to type
+        // line below would set properties-name, properties-resourceGroupName, properties-endpoints to the value "example"
+        // "name": "example"
+        "properties": {
+          // required, name of the cdn
+          "name": "quickmall",
+          // defaults to name of cdn if not set
+          "resourceGroupName": "quickmall",
+          // will look for all matching domains in the given endpoint of the CDN
+          // if not set looks for a single endpoint with the same name as the CDN
+          "endpoints": [
+            "www.quickmall.live"
+          ]
+        }
+      }
+    }
+  ]
+}
