@@ -61,6 +61,9 @@ namespace LetsEncrypt.Logic
             }
 
             var resource = _renewalOptionParser.ParseTargetResource(cfg);
+            _logger.LogInformation($"resource.Name --> {resource.Name}");
+            _logger.LogInformation($"resource.Type --> {resource.Type}");
+            _logger.LogInformation($"resource.SupportsCertificateCheck --> {resource.SupportsCertificateCheck}");
             // if no update is required still check with target resource
             // and only skip if latest cert is already used
             // this helps if cert issuance worked but resource updated failed
