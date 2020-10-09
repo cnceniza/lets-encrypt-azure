@@ -234,7 +234,10 @@ namespace LetsEncrypt.Logic
             _logger.LogInformation($"starting ->  if (failures.Any())");
             if (failures.Any())
             {
+                _logger.LogInformation($"starting ->  var errors = string.Join(Environment.NewLine, failures.Select(f => f.Detail));");
                 var errors = string.Join(Environment.NewLine, failures.Select(f => f.Detail));
+                _logger.LogInformation($"starting ->  {errors}");
+                _logger.LogInformation($"done ->  var errors = string.Join(Environment.NewLine, failures.Select(f => f.Detail));");
                 throw new RenewalException($"Expected all challenges to be in status {expectedStatus}, but {failures.Length} where not: {errors}", failures);
             }
             _logger.LogInformation($"done ->  if (failures.Any())");
