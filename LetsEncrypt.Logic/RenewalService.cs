@@ -164,12 +164,15 @@ namespace LetsEncrypt.Logic
             var challenge = await _renewalOptionParser.ParseChallengeResponderAsync(cfg, cancellationToken);
             _logger.LogInformation($"done -> renewalOptionParser.ParseChallengeResponderAsync");
 
-            _logger.LogInformation($"starting -> challenge.InitiateChallengesAsync");
+            _logger.LogInformation($"starting -> challenge.InitiateChallengesAsync {order.Location}");
             var challengeContexts = await challenge.InitiateChallengesAsync(order, cancellationToken);
             _logger.LogInformation($"done -> challenge.InitiateChallengesAsync");
 
             if (challengeContexts.IsNullOrEmpty())
+            {
+                _logger.LogError($"starting -> challenge.InitiateChallengesAsync empty challengecontext");
                 throw new ArgumentNullException(nameof(challengeContexts));
+            }
 
             try
             {
