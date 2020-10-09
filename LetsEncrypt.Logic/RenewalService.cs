@@ -190,18 +190,22 @@ namespace LetsEncrypt.Logic
         private async Task ValidateDomainOwnershipAsync(IChallengeContext[] challengeContexts, CancellationToken cancellationToken)
         {
             // let Let's Encrypt know that they can verify the challenge
+            _logger.LogInformation($"starting -> await Task.WhenAll(challengeContexts.Select(c => c.Validate()));");
             await Task.WhenAll(challengeContexts.Select(c => c.Validate()));
+            _logger.LogInformation($"done -> await Task.WhenAll(challengeContexts.Select(c => c.Validate()));");
 
             // fetch response from Let's encrypt regarding challenge success/failure
             Challenge[] challengeResponses = null;
             do
             {
+                _logger.LogInformation($"starting -> if (challengeResponses != null)");
                 if (challengeResponses != null)
                 {
                     // wait before querying again
                     await Task.Delay(500, cancellationToken);
                 }
-                challengeResponses = await Task.WhenAll(challengeContexts.Select(c => c.Resource()));
+                challengeResponses = await Task.WhenAll(challengeContexts.Select(c =>  c.Resource()));
+                _logger.LogInformation($"done -> if (challengeResponses != null)");
             }
             while (challengeResponses.Any(c =>
                 c.Status == ChallengeStatus.Pending ||
@@ -212,18 +216,25 @@ namespace LetsEncrypt.Logic
 
         private void ThrowIfNotInStatus(ChallengeStatus expectedStatus, Challenge[] challenges)
         {
+            _logger.LogInformation($"starting -> if (challenges.IsNullOrEmpty())");
             if (challenges.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(challenges));
+            _logger.LogInformation($"done -> if (challenges.IsNullOrEmpty())");
 
+            _logger.LogInformation($"starting ->  var failures = challenges");
             var failures = challenges
                 .Where(c => c.Status != expectedStatus)
                 .Select(f => f.Error)
                 .ToArray();
+            _logger.LogInformation($"done ->  var failures = challenges");
+
+            _logger.LogInformation($"starting ->  if (failures.Any())");
             if (failures.Any())
             {
                 var errors = string.Join(Environment.NewLine, failures.Select(f => f.Detail));
                 throw new RenewalException($"Expected all challenges to be in status {expectedStatus}, but {failures.Length} where not: {errors}", failures);
             }
+            _logger.LogInformation($"done ->  if (failures.Any())");
         }
 
         /// <summary>
