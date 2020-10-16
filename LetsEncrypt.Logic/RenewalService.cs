@@ -173,12 +173,12 @@ namespace LetsEncrypt.Logic
                 _logger.LogInformation($"result.value = {result.Status.Value}");
                 _logger.LogInformation($"result.token = {result.Token}");
                 _logger.LogInformation($"result.type = {result.Type}");
-                _logger.LogInformation($"result.Url = {result.Url.AbsoluteUri}");
-                _logger.LogInformation($"result.Error.Detail = {result.Error.Detail}");
-                _logger.LogInformation($"result.Error.Identifier.Value = {result.Error.Identifier.Value}");
-                _logger.LogInformation($"result.Error.Identifier.Status= {result.Error.Status}");
+                _logger.LogInformation($"result.Url = {result.Url?.AbsoluteUri}");
+                _logger.LogInformation($"result.Error.Detail = {result.Error?.Detail}");
+                _logger.LogInformation($"result.Error.Identifier.Value = {result.Error?.Identifier?.Value}");
+                _logger.LogInformation($"result.Error.Identifier.Status= {result.Error?.Status}");
                 _logger.LogInformation($"result.Error.Identifier.Subproblems= {string.Join(",", result.Error.Subproblems.Select(s => s.Detail))}");
-                _logger.LogInformation($"result.Error.Identifier.Type= {result.Error.Type}");
+                _logger.LogInformation($"result.Error.Identifier.Type= {result.Error?.Type}");
             }
             _logger.LogInformation($"done -> challenge.InitiateChallengesAsync");
 
