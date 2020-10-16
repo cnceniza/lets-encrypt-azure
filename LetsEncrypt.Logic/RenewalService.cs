@@ -179,7 +179,10 @@ namespace LetsEncrypt.Logic
                     //_logger.LogInformation($"result.Error.Detail = {result?.Error?.Detail}");
                     _logger.LogInformation($"result.Error.Identifier.Value = {result?.Error?.Identifier?.Value}");
                     _logger.LogInformation($"result.Error.Identifier.Status= {result?.Error?.Status}");
-                    _logger.LogInformation($"result.Error.Identifier.Subproblems= {string.Join(",", result?.Error?.Subproblems.Select(s => s.Detail))}");
+                    foreach (var err in result?.Error?.Subproblems)
+                    {
+                        _logger.LogInformation($"result.Error.Identifier.Subproblems= {err.Detail}");
+                    }
                     //_logger.LogInformation($"result.Error.Identifier.Type= {result?.Error?.Type}");
                 }
             }
