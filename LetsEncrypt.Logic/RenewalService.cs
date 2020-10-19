@@ -166,6 +166,8 @@ namespace LetsEncrypt.Logic
 
             _logger.LogInformation($"starting -> challenge.InitiateChallengesAsync {order.Location}");
             var challengeContexts = await challenge.InitiateChallengesAsync(order, cancellationToken);
+
+            _logger.LogInformation($"challengeContextCount {challengeContexts.Count()}");
             foreach (var item in challengeContexts)
             {
                 _logger.LogInformation($"starting -> itemContext validating");
@@ -177,12 +179,12 @@ namespace LetsEncrypt.Logic
                     //_logger.LogInformation($"result.type = {result?.Type}");
                     //_logger.LogInformation($"result.Url = {result?.Url?.AbsoluteUri}");
                     //_logger.LogInformation($"result.Error.Detail = {result?.Error?.Detail}");
-                    _logger.LogInformation($"result.Error.Identifier.Value = {result?.Error?.Identifier?.Value}");
-                    _logger.LogInformation($"result.Error.Identifier.Status= {result?.Error?.Status}");
-                    foreach (var err in result?.Error?.Subproblems)
-                    {
-                        _logger.LogInformation($"result.Error.Identifier.Subproblems= {err.Detail}");
-                    }
+                    //_logger.LogInformation($"result.Error.Identifier.Value = {result?.Error?.Identifier?.Value}");
+                    //_logger.LogInformation($"result.Error.Identifier.Status= {result?.Error?.Status}");
+                    //foreach (var err in result?.Error?.Subproblems)
+                    //{
+                    //    _logger.LogInformation($"result.Error.Identifier.Subproblems= {err.Detail}");
+                    //}
                     //_logger.LogInformation($"result.Error.Identifier.Type= {result?.Error?.Type}");
                 }
             }
